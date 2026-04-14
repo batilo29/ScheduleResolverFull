@@ -18,7 +18,10 @@ class DashboardScreen extends StatelessWidget {
     sortedTasks.sort((a, b) => a.startTime.hour.compareTo(b.startTime.hour));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Schedule Resolver'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Schedule Resolver'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -27,16 +30,28 @@ class DashboardScreen extends StatelessWidget {
               Card(
                 color: Colors.green.shade100,
                 child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                        children: [
-                          const Text('🎉 Recommendation Ready!', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RecommendationScreen())), child: const Text('View Recommendations'))
-                        ]
-                    )
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        '🎉 Recommendation Ready!',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RecommendationScreen(),
+                          ),
+                        ),
+                        child: const Text('View Recommendations'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             const SizedBox(height: 16),
+
             Expanded(
               child: sortedTasks.isEmpty
                   ? const Center(child: Text('No tasks added yet!'))
@@ -44,26 +59,49 @@ class DashboardScreen extends StatelessWidget {
                 itemCount: sortedTasks.length,
                 itemBuilder: (context, index) {
                   final task = sortedTasks[index];
+
+                  // ✅ Proper formatted time
+                  final formattedTime =
+                      "${task.startTime.hour.toString().padLeft(2, '0')}:"
+                      "${task.startTime.minute.toString().padLeft(2, '0')}";
+
                   return Card(
                     child: ListTile(
                       title: Text(task.title),
-                      subtitle: Text("${task.category} | ${task.startTime.hour}:${task.startTime.minute}"),
-                      trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => scheduleProvider.removeTask(task.id)),
+
+                      // ✅ FIXED HERE
+                      subtitle: Text(
+                        "${task.category} | $formattedTime",
+                      ),
+
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () =>
+                            scheduleProvider.removeTask(task.id),
+                      ),
                     ),
                   );
                 },
               ),
             ),
+
             if (sortedTasks.isNotEmpty)
               ElevatedButton(
-                onPressed: aiService.isLoading ? null : () => aiService.analyzeSchedule(scheduleProvider.tasks),
-                child: aiService.isLoading ? const CircularProgressIndicator() : const Text('Resolve Conflicts With AI'),
+                onPressed: aiService.isLoading
+                    ? null
+                    : () => aiService.analyzeSchedule(scheduleProvider.tasks),
+                child: aiService.isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Resolve Conflicts With AI'),
               ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TaskInputScreen())),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TaskInputScreen()),
+        ),
         child: const Icon(Icons.add),
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/ai_schedule_service.dart';
-import '../models/schedule_analysis.dart';
 
 class RecommendationScreen extends StatelessWidget {
   const RecommendationScreen({super.key});
